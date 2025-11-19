@@ -9,14 +9,14 @@ import {
   toHex,
   toRlp,
 } from "viem";
-import { mainnet, sepolia } from "viem/chains";
+import { bsc, bscTestnet } from "viem/chains";
 
-import { FACET_INBOX_ADDRESS } from "../constants/addresses";
-import { FacetTransactionParams } from "../types";
-import { facetMainnet, facetSepolia } from "../viem";
+import { MATRIX_INBOX_ADDRESS } from "../constants/addresses";
+import { MatrixTransactionParams } from "../types";
+import { matrixMainnet, matrixSepolia } from "../viem";
 import { calculateInputGasCost } from "./calculateInputGasCost";
-import { computeFacetTransactionHash } from "./computeFacetTransactionHash";
-import { getFctMintRate } from "./getFctMintRate";
+import { computeMatrixTransactionHash } from "./computeMatrixTransactionHash";
+import { getFctMintRate } from "./getGasMintRate";
 
 interface L1Transaction {
   account: Address;
@@ -28,24 +28,24 @@ interface L1Transaction {
 }
 
 /**
- * Sends a raw Facet transaction by preparing the transaction data and submitting it to L1.
+ * Sends a raw Matrix transaction by preparing the transaction data and submitting it to L1.
  *
- * @param l1ChainId - The chain ID of the L1 network (1 for mainnet, 11155111 for Sepolia)
+ * @param l1ChainId - The chain ID of the L1 network (56 for mainnet, 97 for Testnet)
  * @param account - The address of the account initiating the transaction
  * @param params - Transaction parameters including to, value, and data
  * @param sendL1Transaction - Function to send the L1 transaction and return the transaction hash
  * @param l1RpcUrl - Optional L1 RPC URL
- * @returns Object containing the L1 transaction hash, Facet transaction hash, FCT mint amount, and FCT mint rate
+ * @returns Object containing the L1 transaction hash, Matrix transaction hash, FCT mint amount, and FCT mint rate
  * @throws Error if L1 chain is invalid, account is missing, or L2 chain is not configured
  */
-export const sendRawFacetTransaction = async (
+export const sendRawMatrixTransaction = async (
   l1ChainId: number,
   account: Address,
-  params: FacetTransactionParams,
+  params: MatrixTransactionParams,
   sendL1Transaction: (l1Transaction: L1Transaction) => Promise<Hex>,
   l1RpcUrl?: string
 ) => {
-  if (l1ChainId !== 1 && l1ChainId !== 11_155_111) {
+  if (l1ChainId !== 56 && l1ChainId !== 97) {
     throw new Error("Invalid L1 chain");
   }
 
@@ -53,24 +53,24 @@ export const sendRawFacetTransaction = async (
     throw new Error("No account");
   }
 
-  const facetPublicClient = createPublicClient({
-    chain: l1ChainId === 1 ? facetMainnet : facetSepolia,
+  const matrixPublicClient = createPublicClient({
+    chain: l1ChainId === 56 ? matrixMainnet : matrixSepolia,
     transport: http(),
   });
 
-  if (!facetPublicClient.chain) {
+  if (!matrixPublicClient.chain) {
     throw new Error("L2 chain not configured");
   }
 
   const [estimateGasRes, fctBalance, fctMintRate] = await Promise.all([
-    facetPublicClient.estimateGas({
+    matrixPublicClient.estimateGas({
       account,
       to: params.to,
       value: params.value,
       data: params.data,
       stateOverride: [{ address: account, balance: maxUint256 }],
     }),
-    facetPublicClient.getBalance({
+    matrixPublicClient.getBalance({
       address: account,
     }),
     getFctMintRate(l1ChainId),
@@ -79,7 +79,7 @@ export const sendRawFacetTransaction = async (
   const gasLimit = estimateGasRes;
 
   const transactionData = [
-    toHex(facetPublicClient.chain.id),
+    toHex(matrixPublicClient.chain.id),
     params.to ?? "0x",
     params.value ? toHex(params.value) : "0x",
     gasLimit ? toHex(gasLimit) : "0x",
@@ -94,7 +94,7 @@ export const sendRawFacetTransaction = async (
 
   // Call estimateGas again but with an accurate future balance
   // This will allow it to correctly revert when necessary
-  await facetPublicClient.estimateGas({
+  await matrixPublicClient.estimateGas({
     account,
     to: params.to,
     value: params.value,
@@ -109,19 +109,19 @@ export const sendRawFacetTransaction = async (
 
   const l1Transaction = {
     account,
-    to: FACET_INBOX_ADDRESS,
+    to: MATRIX_INBOX_ADDRESS,
     value: 0n,
     data: encodedTransaction,
     chainId: l1ChainId,
   };
 
   const l1TransportUrl =
-    l1ChainId === 1
-      ? "https://ethereum-rpc.publicnode.com"
-      : "https://ethereum-sepolia-rpc.publicnode.com";
+    l1ChainId === 56
+      ? "https://bsc-dataseed.binance.org"
+      : "https://bsc-testnet.publicnode.com";
 
   const l1PublicClient = createPublicClient({
-    chain: l1ChainId === 1 ? mainnet : sepolia,
+    chain: l1ChainId === 56 ? bsc : bscTestnet,
     transport: http(l1RpcUrl || l1TransportUrl),
   });
   const estimateL1Gas = await l1PublicClient.estimateGas(l1Transaction);
@@ -131,7 +131,7 @@ export const sendRawFacetTransaction = async (
     gas: estimateL1Gas,
   });
 
-  const facetTransactionHash = computeFacetTransactionHash(
+  const matrixTransactionHash = computeMatrixTransactionHash(
     l1TransactionHash,
     account,
     params.to ?? "0x",
@@ -143,7 +143,7 @@ export const sendRawFacetTransaction = async (
 
   return {
     l1TransactionHash,
-    facetTransactionHash,
+    matrixTransactionHash,
     fctMintAmount,
     fctMintRate,
   };

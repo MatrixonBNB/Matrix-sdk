@@ -1,9 +1,10 @@
 import { getAddress } from "viem";
+import { bscTestnet } from "viem/chains";
 
 // INBOX ADDRESS
 
-export const FACET_INBOX_ADDRESS =
-  "0x00000000000000000000000000000000000FacE7" as const;
+export const MATRIX_INBOX_ADDRESS =
+  "0x00000000000000000000000000000000000bbbb1" as const;
 
 // L1 MAINNET CONTRACTS
 
@@ -17,13 +18,13 @@ export const L2_MAINNET_BUDDY_FACTORY_CONTRACT = getAddress(
   "0x7fEa902C73b20a73b789b8dE631E3e84fEae74f3"
 );
 
-// L1 SEPOLIA CONTRACTS
+// L1 Tetsnet CONTRACTS
 
 export const L1_SEPOLIA_ETHER_BRIDGE_CONTRACT = getAddress(
   "0xee3ee560BA048fC844BC59f664AA084fe1B981ea"
 );
 
-// L2 SEPOLIA CONTRACTS
+// L2 Tetsnet CONTRACTS
 
 export const L2_SEPOLIA_BUDDY_FACTORY_CONTRACT = getAddress(
   "0xC975Aa6a9eA0B76f283A4A67FD81b18158aEd598"
@@ -40,20 +41,20 @@ export const L2_WETH_CONTRACT = getAddress(
 
 export const CONTRACT_ADDRESSES = {
   l1: {
-    mainnet: {
+    bsc: {
       ETHER_BRIDGE_CONTRACT: L1_MAINNET_ETHER_BRIDGE_CONTRACT,
     },
-    sepolia: {
+    bscTestnet: {
       ETHER_BRIDGE_CONTRACT: L1_SEPOLIA_ETHER_BRIDGE_CONTRACT,
     },
   },
   l2: {
-    mainnet: {
+    bsc: {
       BUDDY_FACTORY_CONTRACT: L2_MAINNET_BUDDY_FACTORY_CONTRACT,
       L1_BLOCK_CONTRACT: L2_L1_BLOCK_CONTRACT,
       WETH_CONTRACT: L2_WETH_CONTRACT,
     },
-    sepolia: {
+    bscTestnet: {
       BUDDY_FACTORY_CONTRACT: L2_SEPOLIA_BUDDY_FACTORY_CONTRACT,
       L1_BLOCK_CONTRACT: L2_L1_BLOCK_CONTRACT,
       WETH_CONTRACT: L2_WETH_CONTRACT,

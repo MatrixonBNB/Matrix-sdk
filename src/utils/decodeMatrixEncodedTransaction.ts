@@ -1,15 +1,15 @@
 import { Address, fromHex, fromRlp, Hex } from "viem";
 
 /**
- * Decodes the encoded transaction data from an L1 transaction to the Facet Inbox
+ * Decodes the encoded transaction data from an L1 transaction to the Matrix Inbox
  *
  * @param encodedData - The encoded transaction data
  * @returns The decoded transaction parameters
  * @throws Error if the data cannot be decoded
  */
-export const decodeFacetEncodedTransaction = async (encodedData: Hex) => {
+export const decodeMatrixEncodedTransaction = async (encodedData: Hex) => {
   if (!encodedData || encodedData.length < 4) {
-    throw new Error("Invalid Facet transaction calldata");
+    throw new Error("Invalid Matrix transaction calldata");
   }
 
   const strippedData = `0x${encodedData.slice(4)}` as Hex; // Remove '0x' and '46' prefix

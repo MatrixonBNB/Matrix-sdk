@@ -1,3 +1,3 @@
 export * from "./useBridgeAndCall";
-export * from "./useSendFacetTransaction";
-export * from "./useWriteFacetContract";
+export * from "./useSendMatrixTransaction";
+export * from "./useWriteMatrixContract";

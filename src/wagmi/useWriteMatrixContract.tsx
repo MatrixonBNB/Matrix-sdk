@@ -16,7 +16,7 @@ import {
   Hex,
   WriteContractErrorType,
 } from "viem";
-import { mainnet, sepolia } from "viem/chains";
+import { bsc, bscTestnet } from "viem/chains";
 import { useConfig } from "wagmi";
 import {
   UseMutationParameters,
@@ -27,10 +27,10 @@ import {
   WriteContractVariables,
 } from "wagmi/query";
 
-import { writeFacetContract as viemWriteFacetContract } from "../viem/writeFacetContract";
+import { writeMatrixContract as viemWriteMatrixContract } from "../viem/writeMatrixContract";
 
 // Define the extended variables type with mineBoost
-type WriteFacetContractVariables<
+type WriteMatrixContractVariables<
   abi extends Abi | readonly unknown[],
   functionName extends ContractFunctionName<abi, "nonpayable" | "payable">,
   args extends ContractFunctionArgs<
@@ -44,7 +44,7 @@ type WriteFacetContractVariables<
   mineBoost?: Hex;
 };
 
-async function writeFacetContract<
+async function writeMatrixContract<
   config extends Config,
   const abi extends Abi | readonly unknown[],
   functionName extends ContractFunctionName<abi, "nonpayable" | "payable">,
@@ -79,8 +79,8 @@ async function writeFacetContract<
       connector,
     });
 
-  if (client.chain.id !== mainnet.id && client.chain.id !== sepolia.id) {
-    throw new Error("Connect to mainnet or sepolia");
+  if (client.chain.id !== bsc.id && client.chain.id !== bscTestnet.id) {
+    throw new Error("Connect to bsc or bscTestnet");
   }
 
   let request;
@@ -89,12 +89,12 @@ async function writeFacetContract<
     const { request: simulateRequest } = await simulateContract(config, {
       ...rest,
       account,
-      chainId: client.chain.id === mainnet.id ? 0xface7 : 0xface7a,
+      chainId: client.chain.id === bsc.id ? 0xbbbb1 : 0xbbbb2,
     } as any);
     request = simulateRequest;
   }
 
-  const hash = await viemWriteFacetContract(client, {
+  const hash = await viemWriteMatrixContract(client, {
     ...(request as any),
     ...(account ? { account } : {}),
     chain: chainId ? { id: chainId } : null,
@@ -104,18 +104,18 @@ async function writeFacetContract<
   return hash;
 }
 
-function writeFacetContractMutationOptions<config extends Config>(
+function writeMatrixContractMutationOptions<config extends Config>(
   config: config
 ) {
   return {
     mutationFn(variables) {
-      return writeFacetContract(config, variables);
+      return writeMatrixContract(config, variables);
     },
-    mutationKey: ["writeFacetContract"],
+    mutationKey: ["writeMatrixContract"],
   } as const satisfies MutationOptions<
     WriteContractData,
     WriteContractErrorType,
-    WriteFacetContractVariables<
+    WriteMatrixContractVariables<
       Abi,
       string,
       readonly unknown[],
@@ -129,7 +129,7 @@ type ConfigParameter<config extends Config = Config> = {
   config?: Config | config | undefined;
 };
 
-type UseWriteFacetContractParameters<
+type UseWriteMatrixContractParameters<
   config extends Config = Config,
   context = unknown,
 > = ConfigParameter<config> & {
@@ -137,7 +137,7 @@ type UseWriteFacetContractParameters<
     | UseMutationParameters<
         WriteContractData,
         WriteContractErrorType,
-        WriteFacetContractVariables<
+        WriteMatrixContractVariables<
           Abi,
           string,
           readonly unknown[],
@@ -149,13 +149,13 @@ type UseWriteFacetContractParameters<
     | undefined;
 };
 
-type UseWriteFacetContractReturnType<
+type UseWriteMatrixContractReturnType<
   config extends Config = Config,
   context = unknown,
 > = UseMutationReturnType<
   WriteContractData,
   WriteContractErrorType,
-  WriteFacetContractVariables<
+  WriteMatrixContractVariables<
     Abi,
     string,
     readonly unknown[],
@@ -164,46 +164,46 @@ type UseWriteFacetContractReturnType<
   >,
   context
 > & {
-  writeFacetContract: WriteContractMutate<config, context>;
-  writeFacetContractAsync: WriteContractMutateAsync<config, context>;
+  writeMatrixContract: WriteContractMutate<config, context>;
+  writeMatrixContractAsync: WriteContractMutateAsync<config, context>;
 };
 
 /**
- * React hook that provides functionality to write to a Facet contract.
+ * React hook that provides functionality to write to a Matrix contract.
  *
  * @template config - The wagmi Config type, defaults to ResolvedRegister["config"]
  * @template context - The context type for the mutation, defaults to unknown
  *
- * @param {UseWriteFacetContractParameters<config, context>} parameters - Configuration options
+ * @param {UseWriteMatrixContractParameters<config, context>} parameters - Configuration options
  * @param {Config | config | undefined} [parameters.config] - Optional wagmi configuration
  * @param {UseMutationParameters} [parameters.mutation] - Optional react-query mutation parameters
  *
- * @returns {UseWriteFacetContractReturnType<config, context>} Object containing:
- *   - writeFacetContract: Function to execute the contract write (non-async)
- *   - writeFacetContractAsync: Function to execute the contract write (async)
+ * @returns {UseWriteMatrixContractReturnType<config, context>} Object containing:
+ *   - writeMatrixContract: Function to execute the contract write (non-async)
+ *   - writeMatrixContractAsync: Function to execute the contract write (async)
  *   - Additional react-query mutation properties (isLoading, isSuccess, etc.)
  */
-export function useWriteFacetContract<
+export function useWriteMatrixContract<
   config extends Config = ResolvedRegister["config"],
   context = unknown,
 >(
-  parameters: UseWriteFacetContractParameters<config, context> = {}
-): UseWriteFacetContractReturnType<config, context> {
+  parameters: UseWriteMatrixContractParameters<config, context> = {}
+): UseWriteMatrixContractReturnType<config, context> {
   const { mutation } = parameters;
 
   const config = useConfig(parameters);
 
-  const mutationOptions = writeFacetContractMutationOptions(config);
+  const mutationOptions = writeMatrixContractMutationOptions(config);
 
   const { mutate, mutateAsync, ...result } = useMutation({
     ...mutation,
     ...mutationOptions,
   });
 
-  type Return = UseWriteFacetContractReturnType<config, context>;
+  type Return = UseWriteMatrixContractReturnType<config, context>;
   return {
     ...result,
-    writeFacetContract: mutate as Return["writeFacetContract"],
-    writeFacetContractAsync: mutateAsync as Return["writeFacetContractAsync"],
+    writeMatrixContract: mutate as Return["writeMatrixContract"],
+    writeMatrixContractAsync: mutateAsync as Return["writeMatrixContractAsync"],
   };
 }

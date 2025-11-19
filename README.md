@@ -1,6 +1,6 @@
-# @0xfacet/sdk
+# @matrixonbnb/sdk
 
-The `@0xfacet/sdk` is a TypeScript SDK designed for interacting with the Facet network, a decentralized rollup on Ethereum. This SDK simplifies sending transactions, reading from contracts, and handling Facet's unique transaction model, with full compatibility with viem and wagmi.
+The `@0matrixonbnb/sdk` is a TypeScript SDK designed for interacting with the Matrix network, a decentralized rollup on Ethereum. This SDK simplifies sending transactions, reading from contracts, and handling Matrix's unique transaction model, with full compatibility with viem and wagmi.
 
 ## Table of Contents
 
@@ -22,11 +22,11 @@ The `@0xfacet/sdk` is a TypeScript SDK designed for interacting with the Facet n
 Install the package via npm or yarn:
 
 ```sh
-npm install @0xfacet/sdk
+npm install @matrixonbnb/sdk
 ```
 
 ```sh
-yarn add @0xfacet/sdk
+yarn add @matrixonbnb/sdk
 ```
 
 ## Getting Started
@@ -36,39 +36,39 @@ Import and use the SDK functions as needed:
 ```typescript
 // For viem users
 import {
-  sendFacetTransaction,
-  writeFacetContract,
+  sendMatrixTransaction,
+  writeMatrixContract,
   bridgeAndCall,
-  facetMainnet,
-} from "@0xfacet/sdk/viem";
+  matrixMainnet,
+} from "@matrixonbnb/sdk/viem";
 import { createWalletClient, http } from "viem";
 
 // For wagmi users
 import {
-  useSendFacetTransaction,
-  useWriteFacetContract,
+  useSendMatrixTransaction,
+  useWriteMatrixContract,
   useBridgeAndCall,
-} from "@0xfacet/sdk/wagmi";
+} from "@matrixonbnb/sdk/wagmi";
 
 // For utility functions
 import {
   getFctMintRate,
-  decodeFacetEncodedTransaction,
-  computeFacetTransactionHash,
-  sendRawFacetTransaction,
-} from "@0xfacet/sdk/utils";
+  decodeMatrixEncodedTransaction,
+  computeMatrixTransactionHash,
+  sendRawMatrixTransaction,
+} from "@matrixonbnb/sdk/utils";
 ```
 
 ## API Reference
 
 ### Viem Integration
 
-#### `sendFacetTransaction`
+#### `sendMatrixTransaction`
 
-Sends a transaction through the Facet protocol.
+Sends a transaction through the Matrix protocol.
 
 ```typescript
-function sendFacetTransaction<chain, account, request, chainOverride>(
+function sendMatrixTransaction<chain, account, request, chainOverride>(
   client: Client<Transport, chain, account>,
   parameters: SendTransactionParameters<
     chain,
@@ -81,12 +81,12 @@ function sendFacetTransaction<chain, account, request, chainOverride>(
 ): Promise<SendTransactionReturnType>;
 ```
 
-#### `writeFacetContract`
+#### `writeMatrixContract`
 
-Executes a write operation on a contract through the Facet infrastructure.
+Executes a write operation on a contract through the Matrix infrastructure.
 
 ```typescript
-function writeFacetContract<
+function writeMatrixContract<
   chain,
   account,
   abi,
@@ -130,32 +130,32 @@ function bridgeAndCall<chain, account, abi, functionName, args, chainOverride>(
 
 ### WAGMI Integration
 
-#### `useSendFacetTransaction`
+#### `useSendMatrixTransaction`
 
-React hook for sending Facet transactions.
+React hook for sending Matrix transactions.
 
 ```typescript
-function useSendFacetTransaction<config, context>(
-  parameters?: UseSendFacetTransactionParameters<config, context>
-): UseSendFacetTransactionReturnType<config, context>;
+function useSendMatrixTransaction<config, context>(
+  parameters?: UseSendMatrixTransactionParameters<config, context>
+): UseSendMatrixTransactionReturnType<config, context>;
 ```
 
 The transaction parameters can include the optional `mineBoost` property to increase the amount of FCT mined by the transaction.
 
-#### `useWriteFacetContract`
+#### `useWriteMatrixContract`
 
-React hook for executing write operations on contracts through Facet.
+React hook for executing write operations on contracts through Matrix.
 
 ```typescript
-function useWriteFacetContract<abi, functionName, args, config, context>(
-  parameters?: UseWriteFacetContractParameters<
+function useWriteMatrixContract<abi, functionName, args, config, context>(
+  parameters?: UseWriteMatrixContractParameters<
     abi,
     functionName,
     args,
     config,
     context
   >
-): UseWriteFacetContractReturnType<abi, functionName, args, config, context>;
+): UseWriteMatrixContractReturnType<abi, functionName, args, config, context>;
 ```
 
 The contract write parameters can include the optional `mineBoost` property to increase the amount of FCT mined by the transaction.
@@ -177,15 +177,15 @@ function useBridgeAndCall<config, context>(
 Retrieves the current FCT mint rate from the L1 block contract.
 
 ```typescript
-function getFctMintRate(l1ChainId: 1 | 11155111): Promise<bigint>;
+function getFctMintRate(l1ChainId: 56 | 97): Promise<bigint>;
 ```
 
-#### `computeFacetTransactionHash`
+#### `computeMatrixTransactionHash`
 
-Computes a hash for a Facet transaction.
+Computes a hash for a Matrix transaction.
 
 ```typescript
-function computeFacetTransactionHash(
+function computeMatrixTransactionHash(
   l1TransactionHash: Hex,
   from: Address,
   to: Address,
@@ -200,13 +200,13 @@ function computeFacetTransactionHash(
 
 ### Using Viem Methods
 
-#### Send a Facet Transaction
+#### Send a Matrix Transaction
 
 ```typescript
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
-import { sendFacetTransaction } from "@0xfacet/sdk/viem";
+import { sendMatrixTransaction } from "@matrixonbnb/sdk/viem";
 
 const account = privateKeyToAccount("0xYourPrivateKey");
 const client = createWalletClient({
@@ -216,7 +216,7 @@ const client = createWalletClient({
 });
 
 // Send a basic transaction
-const hash = await sendFacetTransaction(client, {
+const hash = await sendMatrixTransaction(client, {
   to: "0xRecipientAddress",
   value: 1000000000000000000n, // 1 FCT
   data: "0x", // Empty data for simple FCT transfer
@@ -232,7 +232,7 @@ console.log("Transaction hash:", hash);
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
-import { writeFacetContract } from "@0xfacet/sdk/viem";
+import { writeMatrixContract } from "@matrixonbnb/sdk/viem";
 
 const account = privateKeyToAccount("0xYourPrivateKey");
 const client = createWalletClient({
@@ -242,7 +242,7 @@ const client = createWalletClient({
 });
 
 // ERC-20 token transfer example
-const hash = await writeFacetContract(client, {
+const hash = await writeMatrixContract(client, {
   address: "0xTokenContractAddress",
   abi: [
     {
@@ -269,7 +269,7 @@ console.log("Contract transaction hash:", hash);
 import { createWalletClient, http, parseEther } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
-import { bridgeAndCall } from "@0xfacet/sdk/viem";
+import { bridgeAndCall } from "@matrixonbnb/sdk/viem";
 
 const account = privateKeyToAccount("0xYourPrivateKey");
 const client = createWalletClient({
@@ -308,20 +308,20 @@ console.log("Bridge and call transaction hash:", hash);
 
 ### Using WAGMI Hooks
 
-#### Send a Facet Transaction with WAGMI
+#### Send a Matrix Transaction with WAGMI
 
 ```tsx
 import React from "react";
 import { parseEther } from "viem";
-import { useSendFacetTransaction } from "@0xfacet/sdk/wagmi";
+import { useSendMatrixTransaction } from "@matrixonbnb/sdk/wagmi";
 
 function SendTransaction() {
-  const { sendFacetTransactionAsync, data } = useSendFacetTransaction();
+  const { sendMatrixTransactionAsync, data } = useSendMatrixTransaction();
 
   const handleSend = async () => {
     try {
       // Using the async version
-      const hash = await sendFacetTransactionAsync({
+      const hash = await sendMatrixTransactionAsync({
         to: "0xRecipientAddress",
         value: parseEther("0.01"),
         mineBoost: "0x01", // Optional: increase FCT mining amount
@@ -341,7 +341,7 @@ function SendTransaction() {
 
 ```tsx
 import React from "react";
-import { useWriteFacetContract } from "@0xfacet/sdk/wagmi";
+import { useWriteMatrixContract } from "@matrixonbnb/sdk/wagmi";
 
 const abi = [
   {
@@ -357,7 +357,7 @@ const abi = [
 ];
 
 function MintNFT() {
-  const { writeFacetContractAsync } = useWriteFacetContract({
+  const { writeMatrixContractAsync } = useWriteMatrixContract({
     abi,
     address: "0xNFTContractAddress",
     functionName: "mint",
@@ -365,7 +365,7 @@ function MintNFT() {
 
   const handleMint = async () => {
     try {
-      await writeFacetContractAsync({
+      await writeMatrixContractAsync({
         args: ["0xYourAddress", 123n],
         mineBoost: "0x01", // Optional: increase FCT mining amount
       });
@@ -383,7 +383,7 @@ function MintNFT() {
 ```tsx
 import React from "react";
 import { parseEther } from "viem";
-import { useBridgeAndCall } from "@0xfacet/sdk/wagmi";
+import { useBridgeAndCall } from "@matrixonbnb/sdk/wagmi";
 
 function BridgeAndMint() {
   const { bridgeAndCall } = useBridgeAndCall();
@@ -418,10 +418,10 @@ The SDK is fully compatible with standard viem and wagmi methods. Here are some 
 
 ```typescript
 import { createPublicClient, http } from "viem";
-import { facetMainnet } from "@0xfacet/sdk/viem";
+import { matrixMainnet } from "@matrixonbnb/sdk/viem";
 
 const publicClient = createPublicClient({
-  chain: facetMainnet,
+  chain: matrixMainnet,
   transport: http(),
 });
 

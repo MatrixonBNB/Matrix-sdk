@@ -17,7 +17,7 @@ import {
   ContractFunctionName,
   WriteContractErrorType,
 } from "viem";
-import { mainnet, sepolia } from "viem/chains";
+import { bsc, bscTestnet } from "viem/chains";
 import { useConfig } from "wagmi";
 import {
   UseMutationParameters,
@@ -63,8 +63,8 @@ async function bridgeAndCall<
       connector,
     });
 
-  if (client.chain.id !== mainnet.id && client.chain.id !== sepolia.id) {
-    throw new Error("Connect to mainnet or sepolia");
+  if (client.chain.id !== bsc.id && client.chain.id !== bscTestnet.id) {
+    throw new Error("Connect to bsc or bscTestnet");
   }
 
   const hash = await viemBridgeAndCall(
@@ -233,7 +233,7 @@ type UseBridgeAndCallReturnType<
 };
 
 /**
- * React hook that provides functionality to bridge and write to a Facet contract.
+ * React hook that provides functionality to bridge and write to a Matrix contract.
  *
  * @template config - The wagmi Config type, defaults to ResolvedRegister["config"]
  * @template context - The context type for the mutation, defaults to unknown

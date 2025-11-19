@@ -12,13 +12,13 @@ import {
 import { sendTransaction } from "viem/actions";
 import { getTransactionError, parseAccount } from "viem/utils";
 
-import { sendRawFacetTransaction } from "../utils";
+import { sendRawMatrixTransaction } from "../utils";
 
 /**
- * Sends a transaction through the Facet protocol.
+ * Sends a transaction through the Matrix protocol.
  *
- * This function builds a Facet transaction using the provided parameters and sends it using
- * the viem client. It handles the complexities of creating L2 transactions on the Facet network.
+ * This function builds a Matrix transaction using the provided parameters and sends it using
+ * the viem client. It handles the complexities of creating L2 transactions on the Matrix network.
  *
  * @template chain - The chain type parameter
  * @template account - The account type parameter
@@ -37,14 +37,14 @@ import { sendRawFacetTransaction } from "../utils";
  * @throws Will throw and properly format any errors that occur during transaction sending
  *
  * @example
- * const hash = await sendFacetTransaction(client, {
+ * const hash = await sendMatrixTransaction(client, {
  *   to: '0x...',
  *   value: parseEther('0.1'),
  *   data: '0x...',
  *   mineBoost: '0x1' // Optional: increase FCT mining amount
  * });
  */
-export async function sendFacetTransaction<
+export async function sendMatrixTransaction<
   chain extends Chain | undefined,
   account extends Account | undefined,
   const request extends SendTransactionRequest<chain, chainOverride>,
@@ -63,7 +63,7 @@ export async function sendFacetTransaction<
     const accountOrAddress = parameters.account ?? client.account;
     const account = accountOrAddress ? parseAccount(accountOrAddress) : null;
 
-    const { facetTransactionHash } = await sendRawFacetTransaction(
+    const { matrixTransactionHash } = await sendRawMatrixTransaction(
       chain!.id,
       account!.address,
       {
@@ -80,7 +80,7 @@ export async function sendFacetTransaction<
         })
     );
 
-    return facetTransactionHash;
+    return matrixTransactionHash;
   } catch (err) {
     throw getTransactionError(err as BaseError, {
       ...parameters,

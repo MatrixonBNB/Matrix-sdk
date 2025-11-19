@@ -9,7 +9,7 @@ import {
   SendTransactionReturnType,
 } from "@wagmi/core";
 import { Evaluate, Hex } from "viem";
-import { mainnet, sepolia } from "viem/chains";
+import { bsc, bscTestnet } from "viem/chains";
 import { Config, useConfig } from "wagmi";
 import {
   SendTransactionData,
@@ -20,10 +20,10 @@ import {
   UseMutationReturnType,
 } from "wagmi/query";
 
-import { sendFacetTransaction } from "../viem/sendFacetTransaction";
+import { sendMatrixTransaction } from "../viem/sendMatrixTransaction";
 
 // Define the extended variables type with mineBoost
-type SendFacetTransactionVariables<
+type SendMatrixTransactionVariables<
   config extends Config,
   chainId extends config["chains"][number]["id"],
 > = SendTransactionVariables<config, chainId> & {
@@ -54,11 +54,11 @@ async function sendTransaction<
   else
     client = await getConnectorClient(config, { account, chainId, connector });
 
-  if (client.chain.id !== mainnet.id && client.chain.id !== sepolia.id) {
-    throw new Error("Connect to mainnet or sepolia");
+  if (client.chain.id !== bsc.id && client.chain.id !== bscTestnet.id) {
+    throw new Error("Connect to bsc or bscTestnet");
   }
 
-  const hash = await sendFacetTransaction(client, {
+  const hash = await sendMatrixTransaction(client, {
     ...(rest as any),
     ...(account ? { account } : {}),
     chain: chainId ? { id: chainId } : null,
@@ -77,7 +77,7 @@ function sendTransactionMutationOptions<config extends Config>(config: config) {
   } as const satisfies MutationOptions<
     SendTransactionData,
     SendTransactionErrorType,
-    SendFacetTransactionVariables<config, config["chains"][number]["id"]>
+    SendMatrixTransactionVariables<config, config["chains"][number]["id"]>
   >;
 }
 
@@ -85,7 +85,7 @@ type ConfigParameter<config extends Config = Config> = {
   config?: Config | config | undefined;
 };
 
-type UseSendFacetTransactionParameters<
+type UseSendMatrixTransactionParameters<
   config extends Config = Config,
   context = unknown,
 > = Evaluate<
@@ -94,65 +94,65 @@ type UseSendFacetTransactionParameters<
       | UseMutationParameters<
           SendTransactionData,
           SendTransactionErrorType,
-          SendFacetTransactionVariables<config, config["chains"][number]["id"]>,
+          SendMatrixTransactionVariables<config, config["chains"][number]["id"]>,
           context
         >
       | undefined;
   }
 >;
 
-type UseSendFacetTransactionReturnType<
+type UseSendMatrixTransactionReturnType<
   config extends Config = Config,
   context = unknown,
 > = Evaluate<
   UseMutationReturnType<
     SendTransactionData,
     SendTransactionErrorType,
-    SendFacetTransactionVariables<config, config["chains"][number]["id"]>,
+    SendMatrixTransactionVariables<config, config["chains"][number]["id"]>,
     context
   > & {
-    sendFacetTransaction: SendTransactionMutate<config, context>;
-    sendFacetTransactionAsync: SendTransactionMutateAsync<config, context>;
+    sendMatrixTransaction: SendTransactionMutate<config, context>;
+    sendMatrixTransactionAsync: SendTransactionMutateAsync<config, context>;
   }
 >;
 
 /**
- * Hook for sending Facet transactions on Ethereum mainnet or Sepolia testnet.
+ * Hook for sending Matrix transactions on bsc mainnet or bsc testnet.
  *
- * This hook provides a convenient way to send transactions through the Facet SDK
+ * This hook provides a convenient way to send transactions through the Matrix SDK
  * using wagmi and viem. It supports both synchronous and asynchronous transaction
  * submission methods.
  *
  * @template config - The wagmi Config type
  * @template context - The mutation context type
  *
- * @param {UseSendFacetTransactionParameters<config, context>} parameters - Configuration options
+ * @param {UseSendMatrixTransactionParameters<config, context>} parameters - Configuration options
  * @param {config} [parameters.config] - The wagmi config to use
  * @param {UseMutationParameters} [parameters.mutation] - React Query mutation options
  *
- * @returns {UseSendFacetTransactionReturnType<config, context>} - Mutation result and transaction methods
- * @returns {SendTransactionMutate<config, context>} returns.sendFacetTransaction - Function to send a transaction
- * @returns {SendTransactionMutateAsync<config, context>} returns.sendFacetTransactionAsync - Function to send a transaction that returns a promise
+ * @returns {UseSendMatrixTransactionReturnType<config, context>} - Mutation result and transaction methods
+ * @returns {SendTransactionMutate<config, context>} returns.sendMatrixTransaction - Function to send a transaction
+ * @returns {SendTransactionMutateAsync<config, context>} returns.sendMatrixTransactionAsync - Function to send a transaction that returns a promise
  *
- * @throws Will throw an error if connected to a chain other than mainnet or Sepolia
+ * @throws Will throw an error if connected to a chain other than bsc or bscTestnet
  *
  * @example
- * const { sendFacetTransaction, isLoading, isSuccess, data } = useSendFacetTransaction();
+ * const { sendMatrixTransaction, isLoading, isSuccess, data } = useSendMatrixTransaction();
  *
  * // Send a transaction
- * sendFacetTransaction({
+ * sendMatrixTransaction({
  *   to: '0x...',
  *   value: parseEther('0.1'),
  *   data: '0x...',
  *   mineBoost: '0x01' // Optional: increase FCT mining amount
  * });
  */
-export function useSendFacetTransaction<
+export function useSendMatrixTransaction<
   config extends Config = ResolvedRegister["config"],
   context = unknown,
 >(
-  parameters: UseSendFacetTransactionParameters<config, context> = {}
-): UseSendFacetTransactionReturnType<config, context> {
+  parameters: UseSendMatrixTransactionParameters<config, context> = {}
+): UseSendMatrixTransactionReturnType<config, context> {
   const { mutation } = parameters;
 
   const config = useConfig(parameters);
@@ -163,11 +163,11 @@ export function useSendFacetTransaction<
     ...mutationOptions,
   });
 
-  type Return = UseSendFacetTransactionReturnType<config, context>;
+  type Return = UseSendMatrixTransactionReturnType<config, context>;
   return {
     ...result,
-    sendFacetTransaction: mutate as Return["sendFacetTransaction"],
-    sendFacetTransactionAsync:
-      mutateAsync as Return["sendFacetTransactionAsync"],
+    sendMatrixTransaction: mutate as Return["sendMatrixTransaction"],
+    sendMatrixTransactionAsync:
+      mutateAsync as Return["sendMatrixTransactionAsync"],
   };
 }

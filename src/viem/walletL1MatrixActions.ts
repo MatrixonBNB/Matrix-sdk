@@ -14,17 +14,17 @@ import {
   WriteContractReturnType,
 } from "viem";
 
-import { FacetTransactionParams } from "../types";
-import { sendRawFacetTransaction } from "../utils";
-import { sendFacetTransaction } from "./sendFacetTransaction";
-import { writeFacetContract } from "./writeFacetContract";
+import { MatrixTransactionParams } from "../types";
+import { sendRawMatrixTransaction } from "../utils";
+import { sendMatrixTransaction } from "./sendMatrixTransaction";
+import { writeMatrixContract } from "./writeMatrixContract";
 
 /**
- * Creates a set of L1 facet actions bound to the provided wallet client
+ * Creates a set of L1 matrix actions bound to the provided wallet client
  * @param l1WalletClient - The viem wallet client for L1 interactions
- * @returns Object containing facet transaction functions
+ * @returns Object containing matrix transaction functions
  */
-export const walletL1FacetActions = <
+export const walletL1MatrixActions = <
   transport extends Transport,
   chain extends Chain | undefined = Chain | undefined,
   account extends Account | undefined = Account | undefined,
@@ -32,12 +32,12 @@ export const walletL1FacetActions = <
   l1WalletClient: WalletClient<transport, chain, account>
 ) => ({
   /**
-   * Sends a transaction through the Facet protocol using the bound L1 wallet client
+   * Sends a transaction through the Matrix protocol using the bound L1 wallet client
    *
    * @param parameters - The transaction parameters
    * @returns A promise that resolves to the transaction hash
    */
-  sendFacetTransaction: <
+  sendMatrixTransaction: <
     const request extends SendTransactionRequest<chain, chainOverride>,
     chainOverride extends Chain | undefined = undefined,
   >(
@@ -48,20 +48,20 @@ export const walletL1FacetActions = <
       request
     > & { mineBoost?: Hex }
   ): Promise<SendTransactionReturnType> => {
-    return sendFacetTransaction(l1WalletClient, parameters);
+    return sendMatrixTransaction(l1WalletClient, parameters);
   },
 
   /**
-   * Sends a raw transaction through the Facet protocol using the bound L1 wallet client
+   * Sends a raw transaction through the Matrix protocol using the bound L1 wallet client
    *
-   * @param parameters - The Facet transaction parameters
-   * @returns A promise that resolves to the transaction result containing L1 and Facet transaction hashes
+   * @param parameters - The Matrix transaction parameters
+   * @returns A promise that resolves to the transaction result containing L1 and Matrix transaction hashes
    */
-  sendRawFacetTransaction: (
-    parameters: FacetTransactionParams
+  sendRawMatrixTransaction: (
+    parameters: MatrixTransactionParams
   ): Promise<{
     l1TransactionHash: Hex;
-    facetTransactionHash: Hex;
+    matrixTransactionHash: Hex;
     fctMintAmount: bigint;
     fctMintRate: bigint;
   }> => {
@@ -72,7 +72,7 @@ export const walletL1FacetActions = <
       throw new Error("No chain");
     }
 
-    return sendRawFacetTransaction(
+    return sendRawMatrixTransaction(
       l1WalletClient.chain.id,
       l1WalletClient.account.address,
       parameters,
@@ -87,12 +87,12 @@ export const walletL1FacetActions = <
   },
 
   /**
-   * Writes to a contract through the Facet protocol using the bound L1 wallet client
+   * Writes to a contract through the Matrix protocol using the bound L1 wallet client
    *
    * @param parameters - The contract write parameters
    * @returns A promise that resolves to the transaction hash
    */
-  writeFacetContract: <
+  writeMatrixContract: <
     const abi extends Abi | readonly unknown[],
     functionName extends ContractFunctionName<abi, "payable" | "nonpayable">,
     args extends ContractFunctionArgs<
@@ -111,6 +111,6 @@ export const walletL1FacetActions = <
       chainOverride
     > & { mineBoost?: Hex }
   ): Promise<WriteContractReturnType> => {
-    return writeFacetContract(l1WalletClient, parameters as any);
+    return writeMatrixContract(l1WalletClient, parameters as any);
   },
 });

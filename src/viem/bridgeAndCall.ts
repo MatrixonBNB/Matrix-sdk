@@ -24,22 +24,22 @@ import {
 } from "viem";
 import { parseAccount } from "viem/accounts";
 import { sendTransaction } from "viem/actions";
-import { mainnet, sepolia } from "viem/chains";
+import { bsc, bscTestnet } from "viem/chains";
 
 import { CONTRACT_ADDRESSES, etherBridgeAbi } from "../constants";
 import { BridgeAndCallConfig } from "../types";
 import {
   applyL1ToL2Alias,
-  computeFacetTransactionHash,
+  computeMatrixTransactionHash,
   getFctMintRate,
 } from "../utils";
-import { facetMainnet, facetSepolia } from "./chains";
+import { matrixMainnet, matrixSepolia } from "./chains";
 
 /**
- * Bridges ETH from L1 to L2 and executes a contract call on Facet (L2).
+ * Bridges ETH from L1 to L2 and executes a contract call on Matrix (L2).
  *
  * This function handles the complexities of bridging ETH from L1 to L2 and executing a contract call
- * on the Facet network. It includes transaction simulation, gas estimation, and proper encoding of
+ * on the Matrix network. It includes transaction simulation, gas estimation, and proper encoding of
  * the bridged transaction data.
  *
  * @template chain - The chain type for the client
@@ -54,7 +54,7 @@ import { facetMainnet, facetSepolia } from "./chains";
  * @param ethValue - The amount of ETH to bridge (in wei)
  * @param config - Optional configuration object for contract addresses
  *
- * @returns A promise that resolves to the Facet transaction hash
+ * @returns A promise that resolves to the Matrix transaction hash
  *
  * @throws Will throw if no account is provided
  * @throws Will throw if the network is unsupported
@@ -115,12 +115,12 @@ export async function bridgeAndCall<
   try {
     const { l1Network, l2Network } = (() => {
       switch (chain?.id) {
-        case mainnet.id:
-        case facetMainnet.id:
-          return { l1Network: mainnet, l2Network: facetMainnet };
-        case sepolia.id:
-        case facetSepolia.id:
-          return { l1Network: sepolia, l2Network: facetSepolia };
+        case bsc.id:
+        case matrixMainnet.id:
+          return { l1Network: bsc, l2Network: matrixMainnet };
+        case bscTestnet.id:
+        case matrixSepolia.id:
+          return { l1Network: bscTestnet, l2Network: matrixSepolia };
         default:
           return { l1Network: undefined, l2Network: undefined };
       }
@@ -131,7 +131,7 @@ export async function bridgeAndCall<
         return { l1Contracts: undefined, l2Contracts: undefined };
       }
 
-      const networkKey = l1Network.name === "Ethereum" ? "mainnet" : "sepolia";
+      const networkKey = l1Network.name === "BNB Smart Chain" ? "bsc" : "bscTestnet";
 
       return {
         l1Contracts: {
@@ -155,7 +155,7 @@ export async function bridgeAndCall<
 
     const gasLimit = 50000000n;
 
-    const encodedFacetFunctionData = encodeFunctionData({
+    const encodedMatrixFunctionData = encodeFunctionData({
       abi: [
         {
           type: "function",
@@ -174,18 +174,18 @@ export async function bridgeAndCall<
       args: [account!.address, ethValue, address, zippedData ?? "0x"],
     });
 
-    const facetPublicClient = createPublicClient({
+    const matrixPublicClient = createPublicClient({
       chain: l2Network,
       transport: http(),
     });
 
-    const simulationTxn = await (facetPublicClient as any).request({
+    const simulationTxn = await (matrixPublicClient as any).request({
       method: "debug_traceCall",
       params: [
         {
           from: applyL1ToL2Alias(l1Contracts.ETHER_BRIDGE_CONTRACT),
           to: l2Contracts.WETH_CONTRACT,
-          data: encodedFacetFunctionData,
+          data: encodedMatrixFunctionData,
           gas: toHex(gasLimit),
           value: "0x0",
         },
@@ -209,7 +209,7 @@ export async function bridgeAndCall<
       l2Contracts.WETH_CONTRACT,
       "0x" as Hex,
       toHex(gasLimit),
-      encodedFacetFunctionData,
+      encodedMatrixFunctionData,
       "0x" as Hex,
     ];
 
@@ -232,17 +232,17 @@ export async function bridgeAndCall<
       account,
     });
 
-    const facetTransactionHash = computeFacetTransactionHash(
+    const matrixTransactionHash = computeMatrixTransactionHash(
       l1TransactionHash,
       applyL1ToL2Alias(l1Contracts.ETHER_BRIDGE_CONTRACT),
       l2Contracts.WETH_CONTRACT,
       0n,
-      encodedFacetFunctionData,
+      encodedMatrixFunctionData,
       gasLimit,
       fctMintAmount
     );
 
-    return facetTransactionHash;
+    return matrixTransactionHash;
   } catch (error) {
     throw getContractError(error as BaseError, {
       abi,

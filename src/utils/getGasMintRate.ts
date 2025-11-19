@@ -1,25 +1,25 @@
 import { createPublicClient, http } from "viem";
 
 import { L2_L1_BLOCK_CONTRACT } from "../constants/addresses";
-import { facetMainnet, facetSepolia } from "../viem";
+import { matrixMainnet, matrixSepolia } from "../viem";
 
 /**
  * Retrieves the current FCT mint rate from the L1 block contract.
  *
- * @param l1ChainId - The chain ID of the L1 network (1 for Ethereum mainnet, 11155111 for Sepolia testnet)
+ * @param l1ChainId - The chain ID of the L1 network (56 for BNB Chain mainnet, 97 for BNB Chain testnet)
  * @returns A Promise that resolves to the current FCT mint rate as a bigint
  */
-export const getFctMintRate = async (l1ChainId: 1 | 11155111) => {
-  if (l1ChainId !== 1 && l1ChainId !== 11155111) {
+export const getFctMintRate = async (l1ChainId: 56 | 97) => {
+  if (l1ChainId !== 56 && l1ChainId !== 97) {
     throw new Error("Invalid chain id");
   }
 
-  const facetPublicClient = createPublicClient({
-    chain: l1ChainId === 1 ? facetMainnet : facetSepolia,
+  const matrixPublicClient = createPublicClient({
+    chain: l1ChainId === 56 ? matrixMainnet : matrixSepolia,
     transport: http(),
   });
 
-  const fctMintRate = await facetPublicClient.readContract({
+  const fctMintRate = await matrixPublicClient.readContract({
     address: L2_L1_BLOCK_CONTRACT,
     abi: [
       {

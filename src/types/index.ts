@@ -2,7 +2,7 @@ import { Address, Hex } from "viem";
 
 import { CONTRACT_ADDRESSES } from "../constants";
 
-export interface FacetTransactionParams {
+export interface MatrixTransactionParams {
   data?: Hex | undefined;
   to?: Address | null | undefined;
   value?: bigint | undefined;

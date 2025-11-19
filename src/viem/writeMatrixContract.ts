@@ -17,13 +17,13 @@ import {
 import { parseAccount } from "viem/accounts";
 import { sendTransaction } from "viem/actions";
 
-import { sendRawFacetTransaction } from "../utils";
+import { sendRawMatrixTransaction } from "../utils";
 
 /**
- * Executes a write operation on a smart contract through the Facet infrastructure.
+ * Executes a write operation on a smart contract through the Matrix infrastructure.
  *
- * This function encodes the function call data, builds a Facet transaction, and sends it
- * to the blockchain. It handles the complexity of interacting with the Facet protocol
+ * This function encodes the function call data, builds a Matrix transaction, and sends it
+ * to the blockchain. It handles the complexity of interacting with the Matrix protocol
  * while maintaining a similar interface to viem's standard contract writing functions.
  *
  * @template {Chain | undefined} chain - The blockchain chain type
@@ -49,7 +49,7 @@ import { sendRawFacetTransaction } from "../utils";
  * @throws {BaseError} With contract context if the transaction fails
  *
  * @example
- * const hash = await writeFacetContract(client, {
+ * const hash = await writeMatrixContract(client, {
  *   address: '0x...',
  *   abi: MyContractABI,
  *   functionName: 'setName',
@@ -57,7 +57,7 @@ import { sendRawFacetTransaction } from "../utils";
  *   mineBoost: '0x1234' // Optional: increase FCT mining amount
  * })
  */
-export async function writeFacetContract<
+export async function writeMatrixContract<
   chain extends Chain | undefined,
   account extends Account | undefined,
   const abi extends Abi | readonly unknown[],
@@ -100,7 +100,7 @@ export async function writeFacetContract<
   } as EncodeFunctionDataParameters);
 
   try {
-    const { facetTransactionHash } = await sendRawFacetTransaction(
+    const { matrixTransactionHash } = await sendRawMatrixTransaction(
       chain!.id,
       account!.address,
       {
@@ -116,7 +116,7 @@ export async function writeFacetContract<
           account,
         })
     );
-    return facetTransactionHash;
+    return matrixTransactionHash;
   } catch (error) {
     throw getContractError(error as BaseError, {
       abi,

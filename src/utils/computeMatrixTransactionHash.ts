@@ -1,7 +1,7 @@
 import { Address, concatHex, Hex, keccak256, toHex, toRlp } from "viem";
 
 /**
- * Computes a hash for a Facet transaction.
+ * Computes a hash for a Matrix transaction.
  *
  * @param l1TransactionHash - The hash of the L1 transaction
  * @param from - The address sending the transaction
@@ -12,7 +12,7 @@ import { Address, concatHex, Hex, keccak256, toHex, toRlp } from "viem";
  * @param mint - The amount of FCT mint in the transaction. This value is here only to preserve the function signature. It is not used in the hash computation.
  * @returns A keccak256 hash of the encoded transaction
  */
-export const computeFacetTransactionHash = (
+export const computeMatrixTransactionHash = (
   sourceHash: Hex,
   from: Address,
   to: Address | null,

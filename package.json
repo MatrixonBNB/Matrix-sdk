@@ -1,8 +1,8 @@
 {
-  "name": "@0xfacet/sdk",
+  "name": "@matrixonbnb/sdk",
   "version": "0.4.9",
   "private": false,
-  "description": "A toolkit for Facet blockchain integration.",
+  "description": "A toolkit for Matrix blockchain integration.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
@@ -43,17 +43,17 @@
     "format:check": "prettier --check ."
   },
   "keywords": [
-    "facet",
+    "matrix",
     "blockchain",
     "viem",
     "sdk"
   ],
-  "author": "Facet <hello@facet.org>",
+  "author": "Matrix <hello@matrixlabs.app>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/0xFacet/facet-sdk/issues"
+    "url": "https://github.com/MatrixonBNB/Matrix-sdk/issues"
   },
-  "homepage": "https://github.com/0xFacet/facet-sdk#readme",
+  "homepage": "https://github.com/MatrixonBNB/Matrix-sdk#readme",
   "devDependencies": {
     "@types/node": "^22.8.0",
     "@types/react": "^19.0.10",
